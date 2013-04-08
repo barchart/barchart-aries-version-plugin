@@ -1,0 +1,364 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+ <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.barchart.base</groupId>
+        <artifactId>barchart-archon</artifactId>
+        <version>2.5.6</version>
+        <relativePath />
+    </parent>
+
+ <groupId>org.apache.felix</groupId>
+ <artifactId>maven-bundle-plugin</artifactId>
+ <version>2.4.0-build003-SNAPSHOT</version>
+ <packaging>maven-plugin</packaging>
+
+ <name>Maven Bundle Plugin</name>
+ <description>
+  Provides a maven plugin that supports creating an OSGi bundle
+  from the contents of the compilation classpath along with its
+  resources and dependencies. Plus a zillion other features.
+  The plugin uses the Bnd tool (http://www.aqute.biz/Code/Bnd)
+ </description>
+
+	<scm>
+		<url>https://github.com/barchart/barchart-maven-bundle-plugin</url>
+		<connection>scm:git:git://github.com/barchart/barchart-maven-bundle-plugin.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-maven-bundle-plugin.git</developerConnection>
+		<tag>master</tag>
+	</scm>
+
+ <build>
+  <plugins>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+     <source>1.5</source>
+     <target>1.5</target>
+    </configuration>
+   </plugin>
+  </plugins>
+ </build>
+
+ <dependencies>
+  <dependency>
+    <groupId>biz.aQute</groupId>
+    <artifactId>bndlib</artifactId>
+    <version>2.0.0.20130123-133441</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.felix</groupId>
+    <artifactId>org.apache.felix.bundlerepository</artifactId>
+    <version>1.6.6</version>
+  </dependency>
+  <dependency>
+   <groupId>org.apache.maven</groupId>
+   <artifactId>maven-core</artifactId>
+   <version>2.0.7</version>
+  </dependency>
+  <dependency>
+   <groupId>org.apache.maven</groupId>
+   <artifactId>maven-archiver</artifactId>
+   <version>2.4.1</version>
+  </dependency>
+  <dependency>
+   <groupId>org.apache.maven.shared</groupId>
+   <artifactId>maven-dependency-tree</artifactId>
+   <version>1.2</version>
+  </dependency>
+  <dependency>
+   <groupId>org.codehaus.plexus</groupId>
+   <artifactId>plexus-utils</artifactId>
+   <version>2.1</version>
+  </dependency>
+  <dependency>
+   <groupId>org.apache.maven.shared</groupId>
+   <artifactId>maven-plugin-testing-harness</artifactId>
+   <version>1.1</version>
+   <scope>test</scope>
+  </dependency>
+ </dependencies>
+
+ <reporting>
+  <plugins>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-plugin-plugin</artifactId>
+    <version>2.8</version>
+   </plugin>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-changes-plugin</artifactId>
+    <version>2.4</version>
+    <configuration>
+     <component>12311143</component>
+     <versionPrefix>maven-bundle-plugin-</versionPrefix>
+     <statusIds>Resolved,Closed</statusIds>
+     <maxEntries>1000</maxEntries>
+     <issueManagementSystems>
+      <issueManagementSystem>JIRA</issueManagementSystem>
+     </issueManagementSystems>
+    </configuration>
+   </plugin>
+  </plugins>
+ </reporting>
+
+
+    <properties>
+    
+    	<!-- Remote source repo -->
+		<gitUrl>git://github.com/apache/felix.git</gitUrl>
+
+		<!-- Local source repo. -->
+		<gitRepo>repo</gitRepo>
+
+		<!-- Project module relative folder. -->
+		<gitModule>bundleplugin</gitModule>
+
+		<!-- Project module in the local repo. -->
+		<gitModuleFolder>${gitRepo}/${gitModule}</gitModuleFolder>
+		
+    </properties>
+    
+    <profiles>
+    
+		<profile>
+			<id>clone</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>groovy-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>clone</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<providerSelection>2.0</providerSelection>
+									<source>
+		<![CDATA[
+		def baseDir = project.basedir
+		def gitUrl = project.properties.gitUrl
+		def gitRepo = project.properties.gitRepo
+		
+		def command
+		def workDir
+		if( new File("$gitRepo", ".git").exists() ){
+			command = [ "git", "pull" ]
+			workDir = new File("$gitRepo")
+		} else{
+			command = [ "git", "clone", gitUrl, gitRepo ]
+			workDir = baseDir
+		}
+		
+		// 		
+		println "### command: ${command}"
+
+		def process = command.execute(null, baseDir) 
+		def std = new StringBuilder()
+		def err = new StringBuilder()
+		process.waitForProcessOutput(std, err)
+
+		// Process standard output..
+		def stdText = std.toString()
+		 
+		// Process error output.
+		def errText = err.toString()
+		println "### result: ${errText}"
+		
+		if(errText.contains("error:") || errText.contains("fatal:")){
+			throw new Exception("Git failed, see messages above. ")
+		}
+		]]>
+									</source>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Make local developer working copy from local Apache clone. -->
+		<profile>
+			<id>copy</id>
+			<build>
+				<plugins>
+					<!-- Copy pom.xml, main and test source folders to working copy. -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-resources-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-src</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<resources>
+										<resource>
+											<directory>${gitModuleFolder}/src/</directory>
+										</resource>
+									</resources>
+									<outputDirectory>${basedir}/src/</outputDirectory>
+									<overwrite>true</overwrite>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Apply patches. -->
+		<profile>
+			<id>apply</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>groovy-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>apply-patch</id>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<providerSelection>2.0</providerSelection>
+									<source>
+		<![CDATA[
+		def baseDir = project.basedir
+		def patchDir = new File(baseDir, "patch")
+		
+		def fileList = []
+		patchDir.eachFileMatch (~/.*.patch/) { 
+			file -> fileList.add(file.path) 
+		}
+			
+		if( fileList.isEmpty() ) {
+			println "### No patch files."
+			return
+		}
+
+		def command = [ "git", "apply", "--verbose" ] + fileList
+		println "### command: ${command}"
+		
+		def process = command.execute(null, baseDir) 
+		def std = new StringBuilder()
+		def err = new StringBuilder()
+		process.waitForProcessOutput(std, err)
+
+		def stdText = std.toString()
+		def errText = err.toString()
+		println "### result: ${errText}"
+		
+		if(errText.contains("error:") || errText.contains("fatal:")){
+			throw new Exception("Git failed, see messages above. ")
+		}
+		]]>
+									</source>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Produce git diff between Apache and Barchart. -->
+		<profile>
+			<id>diff</id>
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>groovy-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>create-patch</id>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<source>
+		<![CDATA[
+		def baseDir = project.basedir
+		def patchDir = new File(baseDir, "patch")
+		def patchFile = new File(patchDir, "current.patch")
+		def gitModuleFolder = project.properties.gitModuleFolder + "/"
+		def source = gitModuleFolder + "src/"
+		def target = "src/"
+	
+		def command = [ "git", "diff", "--relative", "--no-index",  "--", source, target ]
+		println "### command: ${command}"
+		
+		def builder = new ProcessBuilder(command).directory(baseDir)
+		def process = builder.start(); process.waitFor()
+		
+		def stdText = "${process.in.text}"
+		def errText = "${process.err.text}" 
+		println "### result: ${errText}"
+		
+		if(errText.contains("error") || errText.contains("fatal")) {
+			throw new Exception("Git failed, see error messages above.")
+		}
+
+		patchFile.delete()
+		
+		if(stdText.isEmpty()){
+			println "### No difference."
+			return
+		}
+		
+		// Format patch for sumbission to Apache.
+		def diffText = stdText.replaceAll(gitModuleFolder,"")
+		
+		// Create patch file.
+		patchFile.write(diffText)
+		println "### Patch created: " + patchFile 
+		]]>
+									</source>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+    </profiles>
+
+</project>

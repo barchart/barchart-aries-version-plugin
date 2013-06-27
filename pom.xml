@@ -11,7 +11,7 @@
     
     <groupId>org.apache.aries.versioning</groupId>
     <artifactId>org.apache.aries.versioning.plugin</artifactId>
-    <version>0.1.0-build006-SNAPSHOT</version>
+    <version>0.1.0-build001-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>org.apache.aries.versioning.plugin Maven Mojo</name>
     

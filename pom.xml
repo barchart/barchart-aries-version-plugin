@@ -16,9 +16,9 @@
     <name>org.apache.aries.versioning.plugin Maven Mojo</name>
     
 	<scm>
-		<url>https://github.com/barchart/barchart-missive</url>
-		<connection>scm:git:git://github.com/barchart/barchart-missive.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-missive.git</developerConnection>
+		<url>https://github.com/barchart/barchart-aries-versioning</url>
+		<connection>scm:git:git://github.com/barchart/barchart-aries-versioning.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-aries-versioning.git</developerConnection>
 		<tag>master</tag>
 	</scm>
     

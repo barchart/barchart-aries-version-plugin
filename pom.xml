@@ -11,7 +11,7 @@
     
     <groupId>org.apache.aries.versioning</groupId>
     <artifactId>org.apache.aries.versioning.plugin</artifactId>
-    <version>0.1.0-build003</version>
+    <version>0.1.0-build003-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>org.apache.aries.versioning.plugin Maven Mojo</name>
     
@@ -19,7 +19,7 @@
 		<url>https://github.com/barchart/barchart-aries-versioning</url>
 		<connection>scm:git:git://github.com/barchart/barchart-aries-versioning.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-aries-versioning.git</developerConnection>
-		<tag>org.apache.aries.versioning.plugin-0.1.0-build003</tag>
+		<tag>master</tag>
 	</scm>
     
     <dependencies>
@@ -79,19 +79,19 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-<!--             <version>3.8.1</version> -->
+            <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-plugin-plugin</artifactId>
+<!--         <plugins> -->
+<!--             <plugin> -->
+<!--                 <artifactId>maven-plugin-plugin</artifactId> -->
 <!--                 <version>2.3</version> -->
-                <configuration>
-                    <goalPrefix>asv</goalPrefix>
-                </configuration>
-            </plugin>
-        </plugins>
+<!--                 <configuration> -->
+<!--                     <goalPrefix>asv</goalPrefix> -->
+<!--                 </configuration> -->
+<!--             </plugin> -->
+<!--         </plugins> -->
     </build>
 </project>

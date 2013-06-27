@@ -11,7 +11,7 @@
     
     <groupId>org.apache.aries.versioning</groupId>
     <artifactId>org.apache.aries.versioning.plugin</artifactId>
-    <version>0.1.0-build002-SNAPSHOT</version>
+    <version>0.1.0-build002</version>
     <packaging>maven-plugin</packaging>
     <name>org.apache.aries.versioning.plugin Maven Mojo</name>
     
@@ -19,7 +19,7 @@
 		<url>https://github.com/barchart/barchart-aries-versioning</url>
 		<connection>scm:git:git://github.com/barchart/barchart-aries-versioning.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/barchart/barchart-aries-versioning.git</developerConnection>
-		<tag>master</tag>
+		<tag>org.apache.aries.versioning.plugin-0.1.0-build002</tag>
 	</scm>
     
     <dependencies>
